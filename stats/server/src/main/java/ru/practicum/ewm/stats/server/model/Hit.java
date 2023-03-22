@@ -28,7 +28,7 @@ public class Hit {
     @Column(nullable = false, length = 255)
     private String uri;
 
-    @Column(nullable = false, length = 12)
+    @Column(nullable = false, length = 16)
     private String ip;
 
     @Column(nullable = false)
