@@ -1,13 +1,15 @@
 package ru.practicum.ewm.main.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
-public class UserDtoShort {
+@EqualsAndHashCode
+public class CategoryDto {
     private Long id;
     private String name;
 }

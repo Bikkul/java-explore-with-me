@@ -13,15 +13,15 @@ public class MyPageRequest extends PageRequest {
         this.from = from;
     }
 
-    public static MyPageRequest of(int page, int size, @NonNull Sort sort) {
+    public static MyPageRequest of(int from, int size, @NonNull Sort sort) {
         if (sort.isEmpty()) {
             sort = Sort.unsorted();
         }
-        return new MyPageRequest(page, size, sort);
+        return new MyPageRequest(from, size, sort);
     }
 
-    public static MyPageRequest of(int page, int size) {
-        return of(page, size, Sort.unsorted());
+    public static MyPageRequest of(int from, int size) {
+        return of(from, size, Sort.unsorted());
     }
 
     @Override

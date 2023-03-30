@@ -44,17 +44,17 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void checkUserExists(Long id) {
-        if(!userRepository.existsById(id)) {
-            throw new UserNotFoundException(String.format("user with id = %d not found", id));
-        }
-    }
-
     @Override
     @Transactional
     public UserDto addNewUser(UserDtoFromRequest userDtoFromRequest) {
         User user = UserDtoMapper.toUser(userDtoFromRequest);
         User savedUser = userRepository.save(user);
         return UserDtoMapper.toUserDto(savedUser);
+    }
+
+    private void checkUserExists(Long id) {
+        if(!userRepository.existsById(id)) {
+            throw new UserNotFoundException(String.format("user with id = %d not found", id));
+        }
     }
 }
