@@ -13,7 +13,7 @@ import ru.practicum.ewm.main.exception.UserNotFoundException;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError methodArgumentNotValidException(final MethodArgumentNotValidException e) {
+    public ApiError methodArgumentNotValidExceptionHandle(final MethodArgumentNotValidException e) {
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.BAD_REQUEST)
@@ -26,7 +26,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError userNotFoundException(final UserNotFoundException e) {
+    public ApiError userNotFoundExceptionHandle(final UserNotFoundException e) {
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.NOT_FOUND)
@@ -39,11 +39,24 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError categoryNotFoundException(final CategoryNotFoundException e) {
+    public ApiError categoryNotFoundExceptionHandle(final CategoryNotFoundException e) {
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.NOT_FOUND)
                 .reason("The required object was not found.")
+                .message(e.getMessage())
+                .build();
+        apiError.setErrors(e);
+        return apiError;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleThrowable(final Throwable e) {
+        ApiError apiError = ApiError
+                .builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .reason("undefined error")
                 .message(e.getMessage())
                 .build();
         apiError.setErrors(e);

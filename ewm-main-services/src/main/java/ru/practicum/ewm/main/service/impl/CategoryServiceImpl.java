@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.services.impl;
+package ru.practicum.ewm.main.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,8 +10,8 @@ import ru.practicum.ewm.main.exception.CategoryNotFoundException;
 import ru.practicum.ewm.main.mapper.CategoryDtoMapper;
 import ru.practicum.ewm.main.model.Category;
 import ru.practicum.ewm.main.repository.CategoryRepository;
-import ru.practicum.ewm.main.services.CategoryAdminService;
-import ru.practicum.ewm.main.services.CategoryPublicService;
+import ru.practicum.ewm.main.service.CategoryAdminService;
+import ru.practicum.ewm.main.service.CategoryPublicService;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryAdminService, CategoryPublic
 
     private void checkCategoryExists(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotFoundException(String.format("Category with id=%d was not found", id));
+            throw new CategoryNotFoundException(String.format("category with id=%d was not found", id));
         }
     }
 

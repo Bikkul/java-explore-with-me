@@ -1,10 +1,10 @@
 package ru.practicum.ewm.main.dto;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -12,11 +12,11 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode
 public class UserDtoFromRequest {
     @NotBlank
-    @Length(max = 32)
+    @Size(max = 32)
     private String name;
 
     @Email
     @NotBlank
-    @Length(max = 64)
+    @Size(max = 64)
     private String email;
 }

@@ -3,6 +3,7 @@ package ru.practicum.ewm.main.mapper;
 import org.springframework.lang.NonNull;
 import ru.practicum.ewm.main.dto.UserDto;
 import ru.practicum.ewm.main.dto.UserDtoFromRequest;
+import ru.practicum.ewm.main.dto.UserShortDto;
 import ru.practicum.ewm.main.model.User;
 
 import java.util.Optional;
@@ -23,5 +24,13 @@ public class UserDtoMapper {
         Optional.ofNullable(userDto.getEmail()).ifPresent(user::setEmail);
         Optional.ofNullable(userDto.getName()).ifPresent(user::setName);
         return user;
+    }
+
+    public static UserShortDto toUserShortDto(@NonNull User user) {
+        UserShortDto userShortDto = new UserShortDto();
+
+        userShortDto.setId(user.getUserId());
+        userShortDto.setName(user.getName());
+        return userShortDto;
     }
 }

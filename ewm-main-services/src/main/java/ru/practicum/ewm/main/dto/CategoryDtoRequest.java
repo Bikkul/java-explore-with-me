@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -14,6 +15,6 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode
 public class CategoryDtoRequest {
     @NotBlank
-    @Length(max = 64)
+    @Size(max = 64)
     private String name;
 }

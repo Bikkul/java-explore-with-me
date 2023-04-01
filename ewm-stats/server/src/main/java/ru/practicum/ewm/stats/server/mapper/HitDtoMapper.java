@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats.server.utils;
+package ru.practicum.ewm.stats.server.mapper;
 
 import org.springframework.lang.NonNull;
 import ru.practicum.ewm.stats.common.dto.request.HitRequestDto;

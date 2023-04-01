@@ -9,7 +9,7 @@ import ru.practicum.ewm.stats.common.dto.response.HitResponseDto;
 import ru.practicum.ewm.stats.common.dto.response.HitStatsDto;
 import ru.practicum.ewm.stats.server.model.Hit;
 import ru.practicum.ewm.stats.server.repository.HitRepository;
-import ru.practicum.ewm.stats.server.utils.HitDtoMapper;
+import ru.practicum.ewm.stats.server.mapper.HitDtoMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.services.impl;
+package ru.practicum.ewm.main.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import ru.practicum.ewm.main.dto.UserDtoFromRequest;
 import ru.practicum.ewm.main.exception.UserNotFoundException;
 import ru.practicum.ewm.main.model.User;
 import ru.practicum.ewm.main.repository.UserRepository;
-import ru.practicum.ewm.main.services.UserService;
+import ru.practicum.ewm.main.service.UserService;
 import ru.practicum.ewm.main.common.MyPageRequest;
 import ru.practicum.ewm.main.mapper.UserDtoMapper;
 

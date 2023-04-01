@@ -31,7 +31,7 @@
         <jacoco.version>0.8.8</jacoco.version>
         <lombok.version>1.18.24</lombok.version>
         <common.lang.version>3.12.0</common.lang.version>
-        <stats.common.version>0.0.1-SNAPSHOT</stats.common.version>
+        <stats.version>0.0.1-SNAPSHOT</stats.version>
         <jackson.version>2.14.2</jackson.version>
         <spring.boot.version>2.7.9</spring.boot.version>
         <postgresql.verison>42.6.0</postgresql.verison>
@@ -87,7 +87,14 @@
             <dependency>
                 <groupId>ru.practicum</groupId>
                 <artifactId>explore-with-me-stats-common</artifactId>
-                <version>${stats.common.version}</version>
+                <version>${stats.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.practicum</groupId>
+                <artifactId>explore-with-me-stats-client</artifactId>
+                <version>${stats.version}</version>
                 <scope>compile</scope>
             </dependency>
 
