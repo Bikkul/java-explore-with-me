@@ -9,6 +9,7 @@ import ru.practicum.ewm.main.dto.UserDto;
 import ru.practicum.ewm.main.dto.UserDtoFromRequest;
 import ru.practicum.ewm.main.service.UserService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -32,7 +33,7 @@ public class AdminUsersController {
 
     @PostMapping
     @ResponseStatus()
-    public UserDto addNewUser(@RequestBody UserDtoFromRequest userDto) {
+    public UserDto addNewUser(@RequestBody @Valid UserDtoFromRequest userDto) {
         UserDto addedUser = userService.addNewUser(userDto);
         log.info("user with fields = { " +
                         "name = {}, " +
