@@ -1,6 +1,5 @@
 package ru.practicum.ewm.main.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.ewm.main.model.enums.ParticipationStatus;

@@ -74,7 +74,7 @@ public class EventDtoMapper {
         return eventFullDto;
     }
 
-    public static EventShortDto toEventShortDto(@NonNull Event event, Long views, Long confirmedRequests) {
+    public static EventShortDto toEventShortDto(@NonNull Event event) {
         EventShortDto eventShortDto = new EventShortDto();
 
         Optional.ofNullable(event.getId()).ifPresent(eventShortDto::setId);
@@ -82,8 +82,21 @@ public class EventDtoMapper {
         Optional.ofNullable(event.getEventDate()).ifPresent(eventShortDto::setEventDate);
         Optional.ofNullable(event.getPaid()).ifPresent(eventShortDto::setPaid);
         Optional.ofNullable(event.getTitle()).ifPresent(eventShortDto::setTitle);
-        Optional.ofNullable(views).ifPresent(eventShortDto::setViews);
-        Optional.ofNullable(confirmedRequests).ifPresent(eventShortDto::setConfirmedRequests);
+        eventShortDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
+        eventShortDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
+        return eventShortDto;
+    }
+
+    public static EventShortDto toEventShortDto(@NonNull Event event, @NonNull Long views, @NonNull Long confirmedRequests) {
+        EventShortDto eventShortDto = new EventShortDto();
+
+        Optional.ofNullable(event.getId()).ifPresent(eventShortDto::setId);
+        Optional.ofNullable(event.getAnnotation()).ifPresent(eventShortDto::setAnnotation);
+        Optional.ofNullable(event.getEventDate()).ifPresent(eventShortDto::setEventDate);
+        Optional.ofNullable(event.getPaid()).ifPresent(eventShortDto::setPaid);
+        Optional.ofNullable(event.getTitle()).ifPresent(eventShortDto::setTitle);
+        eventShortDto.setViews(views);
+        eventShortDto.setConfirmedRequests(confirmedRequests);
         eventShortDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
         eventShortDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
         return eventShortDto;

@@ -23,14 +23,41 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "FROM Event as events " +
             "JOIN FETCH events.initiator " +
             "JOIN FETCH events.category " +
-            "WHERE ((:userIds IS NULL) OR events.initiator.userId IN (:userIds)) " +
-            "AND ((:categoryIds IS NULL) OR events.category.id IN (:categoryIds)) " +
-            "AND ((:states IS NULL) OR events.eventState IN (:states)) " +
+            "WHERE ((:userIds IS NULL) " +
+            "       OR (events.initiator.userId IN (:userIds))) " +
+            "AND ((:categoryIds IS NULL) " +
+            "       OR (events.category.id IN (:categoryIds))) " +
+            "AND ((:states IS NULL) " +
+            "       OR (events.eventState IN (:states))) " +
             "AND ((events.eventDate BETWEEN :start AND :end) " +
-            "OR ((:strat IS NULL) AND (:end IS NULL)))")
-    List<Event> searchEventByAdmin(@Param("userIds") Set<Long> userIds,
-                                   @Param("categoryIds") Set<Long> categoryIds,
-                                   @Param("states") Set<EventState> eventStates,
-                                   @Param("start") LocalDateTime rangeStart,
-                                   @Param("end") LocalDateTime rangeEnd, Pageable pageable);
+            "       OR ((:strat IS NULL) OR (:end IS NULL)))")
+    List<Event> findEventsByAdmin(@Param("userIds") Set<Long> userIds,
+                                  @Param("categoryIds") Set<Long> categoryIds,
+                                  @Param("states") Set<EventState> eventStates,
+                                  @Param("start") LocalDateTime rangeStart,
+                                  @Param("end") LocalDateTime rangeEnd,
+                                  Pageable pageable);
+
+    @Query("SELECT events " +
+            "FROM Event as events " +
+            "JOIN FETCH events.initiator " +
+            "JOIN FETCH events.category " +
+            "WHERE ((:categoryIds IS NULL) " +
+            "       OR (events.category.id IN (:categoryIds))) " +
+            "AND ((:paid IS NULL) " +
+            "       OR (events.paid = :paid)) " +
+            "AND ((:states IS NULL) " +
+            "       OR (events.eventState = :states)) " +
+            "AND ((events.eventDate BETWEEN :start AND :end) " +
+            "       OR ((:strat IS NULL) OR (:end IS NULL))) " +
+            "AND ((:text IS NULL) " +
+            "       OR LOWER(events.description) LIKE LOWER(CONCAT('%',:text,'%')) " +
+            "       OR LOWER(events.annotation) LIKE LOWER(CONCAT('%',:text,'%')))")
+    List<Event> findEventsByUser(@Param("categoryIds") Set<Long> categoryIds,
+                                 @Param("paid") Boolean paid,
+                                 @Param("states") EventState eventStates,
+                                 @Param("start") LocalDateTime rangeStart,
+                                 @Param("end") LocalDateTime rangeEnd,
+                                 @Param("text") String text,
+                                 Pageable pageable);
 }
