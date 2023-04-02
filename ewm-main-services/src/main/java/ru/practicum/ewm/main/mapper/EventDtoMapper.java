@@ -53,6 +53,27 @@ public class EventDtoMapper {
         return eventFullDto;
     }
 
+    public static EventFullDto toEventFullDto(@NonNull Event event) {
+        EventFullDto eventFullDto = new EventFullDto();
+
+        Optional.ofNullable(event.getId()).ifPresent(eventFullDto::setId);
+        Optional.ofNullable(event.getTitle()).ifPresent(eventFullDto::setTitle);
+        Optional.ofNullable(event.getParticipantLimit()).ifPresent(eventFullDto::setParticipantLimit);
+        Optional.ofNullable(event.getAnnotation()).ifPresent(eventFullDto::setAnnotation);
+        Optional.ofNullable(event.getDescription()).ifPresent(eventFullDto::setDescription);
+        Optional.ofNullable(event.getPaid()).ifPresent(eventFullDto::setPaid);
+        Optional.ofNullable(event.getRequestModeration()).ifPresent(eventFullDto::setRequestModeration);
+        Optional.ofNullable(event.getEventState()).ifPresent(eventFullDto::setState);
+        Optional.ofNullable(event.getEventDate()).ifPresent(eventFullDto::setEventDate);
+        Optional.ofNullable(event.getCreatedOn()).ifPresentOrElse(eventFullDto::setCreatedOn, LocalDateTime::now);
+        Optional.ofNullable(event.getPublishedOn()).ifPresent(eventFullDto::setPublishedOn);
+        eventFullDto.setLocation(Location.of(event));
+        eventFullDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
+        eventFullDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
+
+        return eventFullDto;
+    }
+
     public static EventShortDto toEventShortDto(@NonNull Event event, Long views, Long confirmedRequests) {
         EventShortDto eventShortDto = new EventShortDto();
 

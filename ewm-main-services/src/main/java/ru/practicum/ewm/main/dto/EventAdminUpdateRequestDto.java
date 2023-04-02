@@ -1,8 +1,11 @@
 package ru.practicum.ewm.main.dto;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.ewm.main.common.Location;
-import ru.practicum.ewm.main.model.enums.EventStateAction;
+import ru.practicum.ewm.main.model.enums.EventAdminStateAction;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -10,23 +13,22 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
-public class EventUpdateDto {
-    @Size(min = 3, max = 2000)
+public class EventAdminUpdateRequestDto {
+    @Size(min = 20, max = 2000)
     private String annotation;
 
-    @Size(min = 3, max = 7000)
+    @Size(min = 20, max = 7000)
     private String description;
 
     @Size(min = 3, max = 120)
     private String title;
 
-    private Long category;
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
-    private EventStateAction stateAction;
+    private EventAdminStateAction stateAction;
+    private Long category;
 }

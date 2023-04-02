@@ -13,6 +13,7 @@ import ru.practicum.ewm.main.model.Category;
 import ru.practicum.ewm.main.model.Event;
 import ru.practicum.ewm.main.model.Participation;
 import ru.practicum.ewm.main.model.User;
+import ru.practicum.ewm.main.model.enums.EventAdminStateAction;
 import ru.practicum.ewm.main.model.enums.EventState;
 import ru.practicum.ewm.main.model.enums.EventStateAction;
 import ru.practicum.ewm.main.model.enums.ParticipationStatus;
@@ -20,22 +21,26 @@ import ru.practicum.ewm.main.repository.CategoryRepository;
 import ru.practicum.ewm.main.repository.EventRepository;
 import ru.practicum.ewm.main.repository.ParticipationRepository;
 import ru.practicum.ewm.main.repository.UserRepository;
+import ru.practicum.ewm.main.service.EventAdminService;
 import ru.practicum.ewm.main.service.EventPrivateService;
+import ru.practicum.ewm.main.service.EventPublicService;
+import ru.practicum.ewm.main.service.EventStatisticService;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class EventPrivateServiceImpl implements EventPrivateService {
+public class EventServiceImpl implements EventPrivateService, EventAdminService, EventPublicService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ParticipationRepository participationRepository;
+    private final EventStatisticService eventStatisticService;
 
     @Override
     @Transactional
@@ -43,7 +48,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         checkValidStartEventDate(eventNewDto);
         Event event = getEvent(eventNewDto, userId);
         Event savedEvent = eventRepository.save(event);
-        return EventDtoMapper.toEventFullDto(savedEvent, null, null);
+        return EventDtoMapper.toEventFullDto(savedEvent);
     }
 
     @Override
@@ -53,9 +58,10 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         checkValidStartEventDate(eventUpdateDto);
         Event event = getEvent(eventId);
         checkEventStatusIsPendingOrCanceled(event);
-        performAction(event, eventUpdateDto);
-        Event updatedEvent = getUpdateEvent(event, eventUpdateDto);
-        return EventDtoMapper.toEventFullDto(updatedEvent, null, null);
+        fillEventState(event, eventUpdateDto.getStateAction());
+        Event eventToUpdate = getUpdateEvent(event, eventUpdateDto);
+        Event updatedEvent = eventRepository.save(eventToUpdate);
+        return EventDtoMapper.toEventFullDto(updatedEvent);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     public EventFullDto getUserEventById(Long userId, Long eventId) {
         checkUserExists(userId);
         Event event = getEvent(eventId);
-        return EventDtoMapper.toEventFullDto(event, null, null);
+        return EventDtoMapper.toEventFullDto(event);
     }
 
     @Override
@@ -93,6 +99,137 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         List<Participation> requests = getParticipationRequest(event, eventParticipationStatusUpdateDto);
         List<Participation> savedRequests = participationRepository.saveAll(requests);
         return ParticipationDtoMapper.toEventParticipationStatusDto(savedRequests);
+    }
+
+    @Override
+    public List<EventFullDto> searchEventsByAdmin(Integer from, Integer size, Set<Long> userIds, Set<Long> categoryIds,
+                                                  Set<EventState> eventStates, LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+        List<Event> events = eventRepository.searchEventByAdmin(userIds, categoryIds, eventStates, rangeStart, rangeEnd,
+                MyPageRequest.of(from, size));
+        Set<Long> eventsIds = getEventIds(events);
+        List<String> eventsUri = getUris(eventsIds);
+        Map<Long, Long> eventsViews = eventStatisticService
+                .getEventsViews(rangeStart, rangeEnd, eventsUri, Boolean.FALSE);
+        Map<Long, Long> confirmedRequests = participationRepository
+                .getEventParticipationCount(eventsIds, ParticipationStatus.CONFIRMED);
+        return events
+                .stream()
+                .map(event -> EventDtoMapper.toEventFullDto(event, eventsViews.get(event.getId()),
+                        confirmedRequests.get(event.getId())))
+                .sorted(Comparator.comparing(EventFullDto::getId).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public EventFullDto updateEventByAdmin(EventAdminUpdateRequestDto eventDto, Long eventId) {
+        Event event = getEvent(eventId);
+        Event eventToUpdate = getUpdatedEvent(event, eventDto);
+        checkEventAdminUpdate(event, eventDto.getStateAction());
+        fillEventState(event, eventDto.getStateAction());
+        Event updatedEvent = eventRepository.save(eventToUpdate);
+        return EventDtoMapper.toEventFullDto(updatedEvent);
+    }
+
+    private List<String> getUris(Set<Long> eventIds) {
+        List<String> uris = new ArrayList<>();
+        for (Long eventId : eventIds) {
+            uris.add("/events/" + eventId);
+        }
+        return uris;
+    }
+
+    private Set<Long> getEventIds(List<Event> events) {
+        Set<Long> eventIds = new HashSet<>();
+
+        for (Event event : events) {
+            eventIds.add(event.getId());
+        }
+        return eventIds;
+    }
+
+    private Event getUpdatedEvent(Event event, EventAdminUpdateRequestDto eventUpdateDto) {
+        Long categoryId = eventUpdateDto.getCategory();
+        Location location = eventUpdateDto.getLocation();
+
+        if (categoryId != null) {
+            checkCategoryExists(categoryId);
+            Category category = categoryRepository.getReferenceById(categoryId);
+            event.setCategory(category);
+        }
+
+        if (location != null) {
+            event.setLat(location.getLat());
+            event.setLon(location.getLon());
+        }
+
+        Optional.ofNullable(eventUpdateDto.getTitle()).ifPresent(event::setTitle);
+        Optional.ofNullable(eventUpdateDto.getAnnotation()).ifPresent(event::setAnnotation);
+        Optional.ofNullable(eventUpdateDto.getDescription()).ifPresent(event::setDescription);
+        Optional.ofNullable(eventUpdateDto.getEventDate()).ifPresent(event::setEventDate);
+        Optional.ofNullable(eventUpdateDto.getPaid()).ifPresent(event::setPaid);
+        Optional.ofNullable(eventUpdateDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
+        Optional.ofNullable(eventUpdateDto.getRequestModeration()).ifPresent(event::setRequestModeration);
+        return event;
+    }
+
+    private void fillEventState(Event event, EventAdminStateAction stateAction) {
+        if (stateAction == null) {
+            return;
+        }
+
+        switch (stateAction) {
+            case PUBLISH_EVENT:
+                event.setEventState(EventState.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
+                break;
+            case REJECT_EVENT:
+                event.setEventState(EventState.CANCELED);
+                break;
+            default:
+                throw new IllegalEventStateActionException(String.format("event state action expect PUBLISH_EVENT or REJECT_EVENT, " +
+                        "actual=%s", stateAction));
+        }
+    }
+
+    private static void checkEventAdminUpdate(Event event, EventAdminStateAction stateAction) {
+        checkValidEventPublishedDate(event);
+
+        if (stateAction == EventAdminStateAction.PUBLISH_EVENT) {
+            checkEventStateBeforePublish(event);
+        } else if (stateAction == EventAdminStateAction.REJECT_EVENT) {
+            checkEventStateBeforeReject(event);
+        }
+    }
+
+
+    public static void checkValidEventPublishedDate(Event event) {
+        LocalDateTime eventDate = event.getEventDate();
+        LocalDateTime publishedOn = event.getPublishedOn();
+        if (eventDate == null || publishedOn == null) {
+            return;
+        }
+
+        if (!eventDate.minusHours(1L).isAfter(publishedOn)) {
+            throw new EventNotValidStartDateException("Event date cannot be earlier than one hours from the published time");
+
+        }
+    }
+
+    public static void checkEventStateBeforePublish(Event event) {
+        EventState eventState = event.getEventState();
+        if (eventState != EventState.PENDING) {
+            throw new IllegalEventStateActionException(String
+                    .format("Cannot publish the event because it's not in the right state: %s", eventState));
+        }
+    }
+
+    public static void checkEventStateBeforeReject(Event event) {
+        EventState eventState = event.getEventState();
+        if (eventState == EventState.PUBLISHED) {
+            throw new IllegalEventStateActionException(String
+                    .format("Cannot cancel the event because it's not in the right state: %s", eventState));
+        }
     }
 
     private List<Participation> getParticipationRequest(Event event,
@@ -139,7 +276,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     private Event getUpdateEvent(Event event, EventUpdateDto eventUpdateDto) {
-        Long categoryId = eventUpdateDto.getCategoryId();
+        Long categoryId = eventUpdateDto.getCategory();
         Location location = eventUpdateDto.getLocation();
 
         if (categoryId != null) {
@@ -153,6 +290,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
             event.setLon(location.getLon());
         }
 
+        Optional.ofNullable(eventUpdateDto.getTitle()).ifPresent(event::setTitle);
         Optional.ofNullable(eventUpdateDto.getAnnotation()).ifPresent(event::setAnnotation);
         Optional.ofNullable(eventUpdateDto.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventUpdateDto.getEventDate()).ifPresent(event::setEventDate);
@@ -176,8 +314,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return EventDtoMapper.toEvent(eventDto, initiator, category);
     }
 
-    private void performAction(Event event, EventUpdateDto eventUpdateDto) {
-        EventStateAction stateAction = eventUpdateDto.getStateAction();
+    private void fillEventState(Event event, EventStateAction stateAction) {
         if (stateAction == null) {
             return;
         }
