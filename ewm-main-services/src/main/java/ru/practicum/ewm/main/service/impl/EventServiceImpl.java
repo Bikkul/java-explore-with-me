@@ -206,7 +206,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         int confirmedRequests = participationRepository.getEventRequestsCount(event.getId(), ParticipationStatus.CONFIRMED);
         checkParticipationLimit(confirmedRequests, event.getParticipantLimit());
 
-        List<Participation> requests = participationRepository.findAllById(eventParticipationStatusDto.getRequestsIds());
+        List<Participation> requests = participationRepository.findAllById(eventParticipationStatusDto.getRequestIds());
         setParticipationStatusToConfirmed(event, status, limit, confirmedRequests, requests);
         setParticipationStatusToRejected(status, requests);
         return requests;
@@ -277,7 +277,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
     }
 
     private Event getEvent(EventNewDto eventDto, Long userId) {
-        Long categoryId = eventDto.getCategoryId();
+        Long categoryId = eventDto.getCategory();
         User initiator = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("user with id = %d not found", userId)));
         Category category = categoryRepository.findById(categoryId)

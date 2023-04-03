@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class EventParticipationStatusUpdateDto {
-    private List<Long> requestsIds;
+    private List<Long> requestIds;
     private ParticipationStatus status;
 }

@@ -43,7 +43,7 @@ public class AdminEventsController {
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public EventFullDto updateEvent(@PathVariable Long eventId,
-                                    @RequestParam @Valid EventAdminUpdateRequestDto eventDto) {
+                                    @RequestBody @Valid EventAdminUpdateRequestDto eventDto) {
         EventFullDto updatedEvent = eventAdminService.updateEventByAdmin(eventDto, eventId);
         log.info("event with id={} updated by admin", eventId);
         return updatedEvent;

@@ -53,7 +53,7 @@ public class PrivateEventsController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addEvent(@PathVariable Long userId,
                                  @RequestBody @Valid EventNewDto eventDto) {
-        log.info(eventDto.getAnnotation(), eventDto.getTitle(), eventDto. getCategoryId());
+        log.info(eventDto.getAnnotation(), eventDto.getTitle(), eventDto.getCategory());
         log.info("user with id={} added new event", userId);
         return eventPrivateService.addNewEvent(eventDto, userId);
     }
