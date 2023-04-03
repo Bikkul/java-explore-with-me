@@ -29,8 +29,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "       OR (events.category.id IN (:categoryIds))) " +
             "AND ((:states IS NULL) " +
             "       OR (events.eventState IN (:states))) " +
-            "AND (:start IS NULL OR events.eventDate >= :start) " +
-            "AND (:end  IS NULL OR events.eventDate <= :end)")
+            "AND (events.eventDate BETWEEN :start AND :end)")
     List<Event> findEventsByAdmin(@Param("userIds") Set<Long> userIds,
                                   @Param("categoryIds") Set<Long> categoryIds,
                                   @Param("states") Set<EventState> eventStates,
@@ -48,8 +47,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "       OR (events.paid = :paid)) " +
             "AND ((:states IS NULL) " +
             "       OR (events.eventState = :states)) " +
-            "AND (CAST(:start AS date) IS NULL OR events.eventDate >= :start) " +
-            "AND (CAST(:end AS date) IS NULL OR events.eventDate <= :end) " +
+            "AND (events.eventDate BETWEEN :start AND :end) " +
             "AND ((:text IS NULL) " +
             "       OR LOWER(events.description) LIKE LOWER(CONCAT('%',:text,'%')) " +
             "       OR LOWER(events.annotation) LIKE LOWER(CONCAT('%',:text,'%')))")

@@ -53,7 +53,7 @@ public class ParticipationPrivateServiceImpl implements ParticipationPrivateServ
         checkUserExists(userId);
         Participation participation = getParticipationById(requestId);
         participation.setParticipationStatus(ParticipationStatus.CANCELED);
-        Participation canceledParticipation = participationRepository.save(participation);
+        Participation canceledParticipation = participationRepository.saveAndFlush(participation);
         return ParticipationDtoMapper.toParticipationDto(canceledParticipation);
     }
 

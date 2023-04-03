@@ -59,17 +59,17 @@ public class PrivateEventsController {
     }
 
     @PatchMapping("/{eventId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
-                                    @RequestBody @Valid EventUpdateDto eventDto) {
+                                    @RequestBody  @Valid EventUpdateDto eventDto) {
         EventFullDto updatedEvent = eventPrivateService.updateEvent(eventDto, userId, eventId);
         log.info("user event with userId={}, eventId={} has been update", userId, eventId);
         return updatedEvent;
     }
 
     @PatchMapping("/{eventId}/requests")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public EventParticipationStatusDto updateEventRequest(@PathVariable Long userId,
                                                           @PathVariable Long eventId,
                                                           @RequestBody @Valid EventParticipationStatusUpdateDto eventParticipationStatusDto) {

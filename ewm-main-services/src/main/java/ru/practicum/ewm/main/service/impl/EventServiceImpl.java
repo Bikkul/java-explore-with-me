@@ -61,7 +61,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         checkEventStatusIsPendingOrCanceled(event);
         fillEventState(event, eventUpdateDto.getStateAction());
         Event eventToUpdate = getUpdateEventByUser(event, eventUpdateDto);
-        Event updatedEvent = eventRepository.save(eventToUpdate);
+        Event updatedEvent = eventRepository.saveAndFlush(eventToUpdate);
         return EventDtoMapper.toEventFullDto(updatedEvent);
     }
 
@@ -98,13 +98,15 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         checkUserExists(userId);
         Event event = getEvent(eventId);
         List<Participation> requests = getParticipationRequest(event, eventParticipationStatusUpdateDto);
-        participationRepository.saveAll(requests);
+        participationRepository.saveAllAndFlush(requests);
         return ParticipationDtoMapper.toEventParticipationStatusDto(requests);
     }
 
     @Override
     public List<EventFullDto> searchEventsByAdmin(Integer from, Integer size, Set<Long> userIds, Set<Long> categoryIds,
                                                   Set<EventState> eventStates, LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+        rangeStart = getValidRangeStartDateTime(rangeStart);
+        rangeEnd = getValidRangeEndDateTime(rangeStart, rangeEnd);
         List<Event> events = eventRepository.findEventsByAdmin(userIds, categoryIds, eventStates, rangeStart, rangeEnd,
                 MyPageRequest.of(from, size));
         Set<Long> eventsIds = getEventIds(events);
@@ -126,7 +128,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         Event eventToUpdate = getUpdatedEventByAdmin(event, eventDto);
         checkEventAdminUpdate(event, eventDto.getStateAction());
         fillEventState(event, eventDto.getStateAction());
-        Event updatedEvent = eventRepository.save(eventToUpdate);
+        Event updatedEvent = eventRepository.saveAndFlush(eventToUpdate);
         return EventDtoMapper.toEventFullDto(updatedEvent);
     }
 
@@ -134,6 +136,8 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
     public List<EventShortDto> searchEventsByUser(Integer from, Integer size, Set<Long> categoryIds, Boolean paid,
                                                   LocalDateTime rangeStart, LocalDateTime rangeEnd, String text,
                                                   EventSort sort, Boolean onlyAvailable, HttpServletRequest request) {
+        rangeStart = getValidRangeStartDateTime(rangeStart);
+        rangeEnd = getValidRangeEndDateTime(rangeStart, rangeEnd);
         List<Event> events = eventRepository.findEventsByUser(categoryIds, paid, EventState.PUBLISHED, rangeStart, rangeEnd,
                 text, MyPageRequest.of(from, size));
         HitRequestDto hitRequestDto = HitRequestDtoMapper.toHitRequestDto(request, APP_NAME);
@@ -154,6 +158,20 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
                 .map(event -> EventDtoMapper.toEventShortDto(event, eventsViews.get(event.getId()),
                         confirmedRequests.get(event.getId())))
                 .collect(toList());
+    }
+
+    private static LocalDateTime getValidRangeEndDateTime(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+        if (rangeEnd == null) {
+            rangeEnd = rangeStart.plusYears(1L);
+        }
+        return rangeEnd;
+    }
+
+    private static LocalDateTime getValidRangeStartDateTime(LocalDateTime rangeStart) {
+        if (rangeStart == null) {
+            rangeStart = LocalDateTime.now();
+        }
+        return rangeStart;
     }
 
     @Override
@@ -405,7 +423,12 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
     }
 
     private void checkValidStartEventDate(EventUpdateDto eventUpdateDto) {
-        if (!eventUpdateDto.getEventDate().minusHours(2L).isAfter(LocalDateTime.now())) {
+        LocalDateTime eventDate = eventUpdateDto.getEventDate();
+        if (eventDate == null) {
+            return;
+        }
+
+        if (!eventDate.minusHours(2L).isAfter(LocalDateTime.now())) {
             throw new EventNotValidStartDateException("Event date cannot be earlier than two hours from the current moment");
         }
     }

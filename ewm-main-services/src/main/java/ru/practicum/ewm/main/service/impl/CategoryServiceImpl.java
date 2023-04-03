@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryAdminService, CategoryPublic
     @Transactional
     public CategoryDto updateCategory(CategoryDtoRequest categoryDtoRequest, Long id) {
         checkCategoryExists(id);
-        Category updatedCategory = categoryRepository.save(categoryToUpdate(categoryDtoRequest, id));
+        Category updatedCategory = categoryRepository.saveAndFlush(categoryToUpdate(categoryDtoRequest, id));
         return CategoryDtoMapper.toCategoryDto(updatedCategory);
     }
 

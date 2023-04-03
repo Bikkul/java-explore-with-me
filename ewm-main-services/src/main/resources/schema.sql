@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS events
     event_location_lat       FLOAT                       NOT NULL,
     event_location_lon       FLOAT                       NOT NULL,
     event_initiator_id       BIGINT REFERENCES users (user_id) ON DELETE CASCADE,
-    event_category_id        BIGINT                      REFERENCES categories (category_id) ON DELETE SET NULL,
+    event_category_id        BIGINT                      REFERENCES categories (category_id) ON DELETE RESTRICT,
     event_participant_limit  INTEGER     DEFAULT 0,
     event_request_moderation BOOLEAN     DEFAULT TRUE,
     event_date               TIMESTAMP WITHOUT TIME ZONE NOT NULL,

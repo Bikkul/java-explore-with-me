@@ -52,7 +52,7 @@ public class CompilationServiceImpl implements CompilationAdminService, Compilat
         checkCompilationExists(compId);
         List<Event> eventList = eventRepository.findAllById(compilationDto.getEvents());
         Compilation compilationToUpdate = getCompilationToUpdate(compilationDto, compId, eventList);
-        Compilation updatedCompilation = compilationRepository.save(compilationToUpdate);
+        Compilation updatedCompilation = compilationRepository.saveAndFlush(compilationToUpdate);
         List<EventShortDto> eventShortDto = getShortEventsDto(eventList);
         return CompilationDtoMapper.toCompilationDto(updatedCompilation, eventShortDto);
     }
