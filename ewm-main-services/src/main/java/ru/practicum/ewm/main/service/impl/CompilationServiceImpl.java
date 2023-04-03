@@ -86,7 +86,7 @@ public class CompilationServiceImpl implements CompilationAdminService, Compilat
         if (pinned != null) {
             return compilationRepository.findAllByPinnedIs(pinned, MyPageRequest.of(from, size));
         }
-        return compilationRepository.findAll(MyPageRequest.of(from, size));
+        return compilationRepository.findAllByQuery(MyPageRequest.of(from, size));
     }
 
     private Set<Long> getEventIds(List<Event> events) {

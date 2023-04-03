@@ -3,11 +3,9 @@ package ru.practicum.ewm.main.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.dto.EventFullDto;
 import ru.practicum.ewm.main.dto.EventShortDto;
 import ru.practicum.ewm.main.model.enums.EventSort;
@@ -21,13 +19,15 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@RestController("/events")
+@RestController
+@RequestMapping("/events")
 @RequiredArgsConstructor
 @Validated
 public class PublicEventsController {
     private final EventPublicService eventPublicService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<EventShortDto> searchEvents(@RequestParam(required = false) Set<Long> categories,
                                             @RequestParam(required = false) Boolean paid,
                                             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
@@ -45,6 +45,7 @@ public class PublicEventsController {
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventById(@PathVariable Long id,
                                      HttpServletRequest httpServletRequest) {
         EventFullDto event = eventPublicService.getEventById(id, httpServletRequest);

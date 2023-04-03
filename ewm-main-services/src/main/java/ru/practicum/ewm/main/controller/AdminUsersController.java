@@ -15,7 +15,8 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Set;
 
-@RestController("/admin/users")
+@RestController
+@RequestMapping("/admin/users")
 @Slf4j
 @Validated
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class AdminUsersController {
     private final UserService userService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsersInfo(@RequestParam(required = false) Set<Long> ids,
                                       @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
                                       @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
@@ -32,7 +34,7 @@ public class AdminUsersController {
     }
 
     @PostMapping
-    @ResponseStatus()
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto addNewUser(@RequestBody @Valid UserRequestDto userDto) {
         UserDto addedUser = userService.addNewUser(userDto);
         log.info("user with fields = { " +

@@ -3,6 +3,7 @@ package ru.practicum.ewm.main.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.dto.EventAdminUpdateRequestDto;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@RestController("/admin/events")
+@RestController
+@RequestMapping("/admin/events")
 @Slf4j
 @RequiredArgsConstructor
 @Validated
@@ -25,6 +27,7 @@ public class AdminEventsController {
     private final EventAdminService eventAdminService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> searchEvents(@RequestParam(required = false) Set<Long> users,
                                            @RequestParam(required = false) Set<EventState> states,
                                            @RequestParam(required = false) Set<Long> categories,
@@ -38,6 +41,7 @@ public class AdminEventsController {
     }
 
     @PatchMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public EventFullDto updateEvent(@PathVariable Long eventId,
                                     @RequestParam @Valid EventAdminUpdateRequestDto eventDto) {
         EventFullDto updatedEvent = eventAdminService.updateEventByAdmin(eventDto, eventId);

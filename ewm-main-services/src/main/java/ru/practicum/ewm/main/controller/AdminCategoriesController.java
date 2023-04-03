@@ -11,7 +11,8 @@ import ru.practicum.ewm.main.service.CategoryAdminService;
 
 import javax.validation.Valid;
 
-@RestController("/admin/categories")
+@RestController
+@RequestMapping(path = "/admin/categories")
 @Slf4j
 @RequiredArgsConstructor
 @Validated

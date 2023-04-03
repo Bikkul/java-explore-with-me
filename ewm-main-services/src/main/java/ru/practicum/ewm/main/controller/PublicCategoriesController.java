@@ -11,7 +11,8 @@ import ru.practicum.ewm.main.service.CategoryPublicService;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
-@RestController("/categories")
+@RestController
+@RequestMapping("/categories")
 @Slf4j
 @RequiredArgsConstructor
 @Validated
@@ -28,6 +29,7 @@ public class PublicCategoriesController {
     }
 
     @GetMapping("/{catId}")
+    @ResponseStatus(HttpStatus.OK)
     public CategoryDto getCategoryInfoById(@PathVariable Long catId) {
         CategoryDto category = categoryPublicService.getCategoryById(catId);
         log.info("category with fields { " +
