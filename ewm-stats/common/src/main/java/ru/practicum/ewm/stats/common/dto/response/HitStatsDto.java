@@ -5,6 +5,7 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class HitStatsDto {
     private String app;
     private String uri;

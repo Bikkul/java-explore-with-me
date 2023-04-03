@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,11 @@ public class EventNewDto {
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
+    private Long categoryId;
 
     @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
-
-    @NotNull
-    private Long categoryId;
 
     @NotBlank
     @Size(min = 20, max = 7000)
@@ -34,6 +33,7 @@ public class EventNewDto {
 
     @NotNull
     @FutureOrPresent
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     @NotNull

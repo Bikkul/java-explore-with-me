@@ -98,8 +98,8 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         checkUserExists(userId);
         Event event = getEvent(eventId);
         List<Participation> requests = getParticipationRequest(event, eventParticipationStatusUpdateDto);
-        List<Participation> savedRequests = participationRepository.saveAll(requests);
-        return ParticipationDtoMapper.toEventParticipationStatusDto(savedRequests);
+        participationRepository.saveAll(requests);
+        return ParticipationDtoMapper.toEventParticipationStatusDto(requests);
     }
 
     @Override
@@ -203,7 +203,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
                                                         EventParticipationStatusUpdateDto eventParticipationStatusDto) {
         ParticipationStatus status = eventParticipationStatusDto.getStatus();
         int limit = event.getParticipantLimit();
-        int confirmedRequests = participationRepository.countAllByEventIdAndParticipationStatus(event.getId(), ParticipationStatus.CONFIRMED);
+        int confirmedRequests = participationRepository.getEventRequestsCount(event.getId(), ParticipationStatus.CONFIRMED);
         checkParticipationLimit(confirmedRequests, event.getParticipantLimit());
 
         List<Participation> requests = participationRepository.findAllById(eventParticipationStatusDto.getRequestsIds());

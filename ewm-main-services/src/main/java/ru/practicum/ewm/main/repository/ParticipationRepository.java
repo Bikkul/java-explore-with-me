@@ -13,7 +13,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
-    Integer countAllByEventIdAndParticipationStatus(Long eventId, ParticipationStatus status);
+    @Query("SELECT COUNT(*) " +
+            "FROM Participation AS requests " +
+            "WHERE requests.event.id = ?1 " +
+            "AND requests.participationStatus = ?2")
+    Integer getEventRequestsCount(Long eventId, ParticipationStatus requestStatus);
 
     Boolean existsByEventIdAndRequesterUserId(Long eventId, Long requesterId);
 

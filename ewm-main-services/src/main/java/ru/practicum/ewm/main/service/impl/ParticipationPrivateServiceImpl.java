@@ -103,7 +103,7 @@ public class ParticipationPrivateServiceImpl implements ParticipationPrivateServ
     private void checkParticipationRequestToValid(User requester, Event event) {
         Long eventId = event.getId();
         Integer confirmedRequests = participationRepository
-                .countAllByEventIdAndParticipationStatus(eventId, ParticipationStatus.CONFIRMED);
+                .getEventRequestsCount(eventId, ParticipationStatus.CONFIRMED);
         Integer participationLimit = event.getParticipantLimit();
 
         checkEventToPublished(event.getEventState());

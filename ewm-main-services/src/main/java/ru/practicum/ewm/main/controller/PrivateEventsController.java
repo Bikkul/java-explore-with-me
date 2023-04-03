@@ -15,7 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/users/{userId}/events")
 @Slf4j
 @RequiredArgsConstructor
 @Validated
@@ -32,7 +32,7 @@ public class PrivateEventsController {
         return events;
     }
 
-    @GetMapping("/{userId}/events/{eventId}")
+    @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventsById(@PathVariable Long userId,
                                       @PathVariable Long eventId) {
@@ -40,7 +40,7 @@ public class PrivateEventsController {
         return eventPrivateService.getUserEventById(userId, eventId);
     }
 
-    @GetMapping("/{userId}/events/{eventId}/requests")
+    @GetMapping("/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationDto> getEventsRequests(@PathVariable Long userId,
                                                     @PathVariable Long eventId) {
@@ -49,29 +49,32 @@ public class PrivateEventsController {
         return eventsParticipation;
     }
 
-    @PostMapping("/{userId}/events/events")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addEvent(@PathVariable Long userId,
                                  @RequestBody @Valid EventNewDto eventDto) {
+        log.info(eventDto.getAnnotation(), eventDto.getTitle(), eventDto. getCategoryId());
         log.info("user with id={} added new event", userId);
         return eventPrivateService.addNewEvent(eventDto, userId);
     }
 
-    @PatchMapping("/{userId}/events/events/{eventId}")
+    @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
                                     @RequestBody @Valid EventUpdateDto eventDto) {
+        EventFullDto updatedEvent = eventPrivateService.updateEvent(eventDto, userId, eventId);
         log.info("user event with userId={}, eventId={} has been update", userId, eventId);
-        return eventPrivateService.updateEvent(eventDto, userId, eventId);
+        return updatedEvent;
     }
 
-    @PatchMapping("/{userId}/events/events/{eventId}/requests)")
+    @PatchMapping("/{eventId}/requests")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public EventParticipationStatusDto updateEventRequest(@PathVariable Long userId,
                                                           @PathVariable Long eventId,
                                                           @RequestBody @Valid EventParticipationStatusUpdateDto eventParticipationStatusDto) {
+        EventParticipationStatusDto updateEventParticipationStatus = eventPrivateService.updateEventParticipationRequest(eventParticipationStatusDto, userId, eventId);
         log.info("participation statuses has been updated");
-        return eventPrivateService.updateEventParticipationRequest(eventParticipationStatusDto, userId, eventId);
+        return updateEventParticipationStatus;
     }
 }

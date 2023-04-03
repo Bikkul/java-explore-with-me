@@ -20,7 +20,7 @@ public class PublicCategoriesController {
     private final CategoryPublicService categoryPublicService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public List<CategoryDto> getCategories(@RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
                                            @RequestParam(required = false, defaultValue = "10") @PositiveOrZero Integer size) {
         List<CategoryDto> categories = categoryPublicService.getCategories(from, size);
