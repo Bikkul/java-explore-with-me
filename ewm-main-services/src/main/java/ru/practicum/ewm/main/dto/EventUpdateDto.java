@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class EventUpdateDto {
     @Size(min = 3, max = 2000)

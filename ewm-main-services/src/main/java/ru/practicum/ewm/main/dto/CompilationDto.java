@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
+@NoArgsConstructor
 @Setter
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
-public class UserDto {
+public class CompilationDto {
     private Long id;
-    private String name;
-    private String email;
+    private String title;
+    private Boolean pinned;
+    private List<EventShortDto> events;
 }

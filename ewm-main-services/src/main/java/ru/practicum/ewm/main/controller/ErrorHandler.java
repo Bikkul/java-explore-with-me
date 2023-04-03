@@ -39,7 +39,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError categoryNotFoundExceptionHandle(final CategoryNotFoundException e) {
+    public ApiError notFoundExceptionHandle(final CategoryNotFoundException e) {
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.NOT_FOUND)

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class UserDtoFromRequest {
+public class UserRequestDto {
     @NotBlank
     @Size(max = 32)
     private String name;
