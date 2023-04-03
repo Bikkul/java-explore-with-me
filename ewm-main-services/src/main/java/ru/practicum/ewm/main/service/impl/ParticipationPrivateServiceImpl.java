@@ -115,7 +115,7 @@ public class ParticipationPrivateServiceImpl implements ParticipationPrivateServ
         int newParticipationRequest = 1;
         int requests = confirmedRequests + newParticipationRequest;
 
-        if (requests >= participationLimit) {
+        if (requests > participationLimit) {
             throw new ParticipationRequestsOutOfBoundsException("Event has reached the limit of participation requests");
         }
     }

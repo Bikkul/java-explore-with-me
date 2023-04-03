@@ -242,6 +242,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
     private Event getUpdateEventByUser(Event event, EventUpdateDto eventUpdateDto) {
         Long categoryId = eventUpdateDto.getCategory();
         Location location = eventUpdateDto.getLocation();
+        checkValidNewEvenDateByUser(eventUpdateDto);
 
         if (categoryId != null) {
             checkCategoryExists(categoryId);
@@ -267,6 +268,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
     private Event getUpdatedEventByAdmin(Event event, EventAdminUpdateRequestDto eventUpdateDto) {
         Long categoryId = eventUpdateDto.getCategory();
         Location location = eventUpdateDto.getLocation();
+        checkValidNewEvenDateByAdmin(eventUpdateDto);
 
         if (categoryId != null) {
             checkCategoryExists(categoryId);
@@ -418,7 +420,28 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
 
         if (!eventDate.minusHours(1L).isAfter(publishedOn)) {
             throw new EventNotValidStartDateException("Event date cannot be earlier than one hours from the published time");
+        }
+    }
 
+    private void checkValidNewEvenDateByAdmin(EventAdminUpdateRequestDto eventUpdateDto) {
+        LocalDateTime eventNewDate = eventUpdateDto.getEventDate();
+        if (eventNewDate == null) {
+            return;
+        }
+
+        if (eventNewDate.isBefore(LocalDateTime.now())) {
+            throw new EventNotValidStartDateException("new event date cannot be after current time");
+        }
+    }
+
+    private void checkValidNewEvenDateByUser(EventUpdateDto eventUpdateDto) {
+        LocalDateTime eventNewDate = eventUpdateDto.getEventDate();
+        if (eventNewDate == null) {
+            return;
+        }
+
+        if (eventNewDate.isBefore(LocalDateTime.now())) {
+            throw new EventNotValidStartDateException("new event date cannot be after current time");
         }
     }
 
@@ -452,7 +475,7 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
         int newParticipationRequest = 1;
         int requests = confirmedRequests + newParticipationRequest;
 
-        if (requests >= participationLimit) {
+        if (requests > participationLimit) {
             throw new ParticipationRequestsOutOfBoundsException("The participant limit has been reached");
         }
     }

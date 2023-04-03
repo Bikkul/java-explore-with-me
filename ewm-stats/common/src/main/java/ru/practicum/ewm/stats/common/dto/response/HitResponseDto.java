@@ -3,14 +3,12 @@ package ru.practicum.ewm.stats.common.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class HitResponseDto {
     private Long id;
@@ -19,4 +17,15 @@ public class HitResponseDto {
     private String ip;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+
+    public HitResponseDto(Long id, String uri, String app, String ip, LocalDateTime timestamp) {
+        this.id = id;
+        this.uri = uri;
+        this.app = app;
+        this.ip = ip;
+        this.timestamp = timestamp;
+    }
+
+    public HitResponseDto() {
+    }
 }

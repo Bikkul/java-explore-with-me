@@ -63,26 +63,6 @@ public class ErrorHandler {
     }
 
 
-    @ExceptionHandler({
-            UserAlreadyExistException.class,
-            EventNotValidStartDateException.class,
-            IllegalEventStateActionException.class,
-            ParticipationRequestsAlreadyExistsException.class,
-            ParticipationRequestsOutOfBoundsException.class,
-            ParticipationRequestsStatusException.class
-    })
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError conflictExceptionHandle(final Exception e) {
-        ApiError apiError = ApiError
-                .builder()
-                .status(HttpStatus.CONFLICT)
-                .reason("For the requested operation the conditions are not met")
-                .message(e.getMessage())
-                .build();
-        apiError.setErrors(e);
-        return apiError;
-    }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError dateIntegrityExceptionHandle(final DataIntegrityViolationException e) {
@@ -90,6 +70,30 @@ public class ErrorHandler {
                 .builder()
                 .status(HttpStatus.CONFLICT)
                 .reason("Integrity constraint has been violated.")
+                .message(e.getMessage())
+                .build();
+        apiError.setErrors(e);
+        return apiError;
+    }
+
+    @ExceptionHandler({
+            UserAlreadyExistException.class,
+            EventNotValidStartDateException.class,
+            IllegalEventStateActionException.class,
+            IllegalEventSortParameterException.class,
+            IllegalEventStateToUpdateExceptin.class,
+            ParticipationRequestsAlreadyExistsException.class,
+            ParticipationRequestsStatusException.class,
+            ParticipationRequestsOutOfBoundsException.class,
+            NotValidUserToParticipationRequestException.class,
+            NotValidEventToParticipationRequestException.class
+    })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError conflictExceptionHandle(final Exception e) {
+        ApiError apiError = ApiError
+                .builder()
+                .status(HttpStatus.CONFLICT)
+                .reason("For the requested operation the conditions are not met")
                 .message(e.getMessage())
                 .build();
         apiError.setErrors(e);

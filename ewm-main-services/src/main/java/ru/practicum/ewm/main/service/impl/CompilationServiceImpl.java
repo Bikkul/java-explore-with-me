@@ -1,6 +1,5 @@
 package ru.practicum.ewm.main.service.impl;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,7 +111,10 @@ public class CompilationServiceImpl implements CompilationAdminService, Compilat
         }
     }
 
-    private List<EventShortDto> getShortEventsDto(@NonNull List<Event> events) {
+    private List<EventShortDto> getShortEventsDto(List<Event> events) {
+        if (events == null || events.isEmpty()) {
+            return new ArrayList<>();
+        }
         int lastEvent = events.size() - 1;
         LocalDateTime rangeStart = events.get(0).getEventDate().minusYears(1L);
         LocalDateTime rangeEnd = events.get(lastEvent).getEventDate();

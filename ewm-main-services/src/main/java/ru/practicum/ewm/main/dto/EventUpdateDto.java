@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.ewm.main.common.Location;
 import ru.practicum.ewm.main.model.enums.EventStateAction;
@@ -22,6 +23,7 @@ public class EventUpdateDto {
     private String title;
 
     private Long category;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
