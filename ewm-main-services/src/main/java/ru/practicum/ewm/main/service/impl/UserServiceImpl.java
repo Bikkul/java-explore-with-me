@@ -3,14 +3,14 @@ package ru.practicum.ewm.main.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.main.common.MyPageRequest;
 import ru.practicum.ewm.main.dto.UserDto;
 import ru.practicum.ewm.main.dto.UserRequestDto;
 import ru.practicum.ewm.main.exception.UserNotFoundException;
+import ru.practicum.ewm.main.mapper.UserDtoMapper;
 import ru.practicum.ewm.main.model.User;
 import ru.practicum.ewm.main.repository.UserRepository;
 import ru.practicum.ewm.main.service.UserService;
-import ru.practicum.ewm.main.common.MyPageRequest;
-import ru.practicum.ewm.main.mapper.UserDtoMapper;
 
 import java.util.List;
 import java.util.Set;
@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsersByIds(Set<Long> ids, Integer from, Integer size) {
         if (ids != null && !ids.isEmpty()) {
-            return userRepository.findAllById(ids).
-                    stream()
+            return userRepository.findAllById(ids)
+                    .stream()
                     .map(UserDtoMapper::toUserDto)
                     .collect(Collectors.toList());
         } else {
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkUserExists(Long id) {
-        if(!userRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(String.format("user with id = %d not found", id));
         }
     }

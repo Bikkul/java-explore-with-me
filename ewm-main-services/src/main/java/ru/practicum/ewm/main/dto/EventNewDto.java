@@ -1,10 +1,7 @@
 package ru.practicum.ewm.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.ewm.main.common.Location;
 
 import javax.validation.constraints.FutureOrPresent;
@@ -16,11 +13,13 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
 public class EventNewDto {
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
+
+    @NotNull
     private Long categoryId;
 
     @NotBlank
