@@ -8,7 +8,6 @@ import ru.practicum.ewm.main.dto.CompilationDto;
 import ru.practicum.ewm.main.dto.CompilationRequestDto;
 import ru.practicum.ewm.main.dto.CompilationUpdateRequestDto;
 import ru.practicum.ewm.main.dto.EventShortDto;
-import ru.practicum.ewm.main.exception.CompilationNotFoundException;
 import ru.practicum.ewm.main.mapper.CompilationDtoMapper;
 import ru.practicum.ewm.main.mapper.EventDtoMapper;
 import ru.practicum.ewm.main.model.Compilation;
@@ -21,6 +20,7 @@ import ru.practicum.ewm.main.service.CompilationAdminService;
 import ru.practicum.ewm.main.service.CompilationPublicService;
 import ru.practicum.ewm.main.service.EventStatisticService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -107,7 +107,7 @@ public class CompilationServiceImpl implements CompilationAdminService, Compilat
 
     private void checkCompilationExists(Long compilationId) {
         if (!compilationRepository.existsById(compilationId)) {
-            throw new CompilationNotFoundException(String.format("compilation with id=%d not found", compilationId));
+            throw new EntityNotFoundException(String.format("compilation with id=%d not found", compilationId));
         }
     }
 

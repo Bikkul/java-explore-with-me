@@ -5,13 +5,14 @@ import ru.practicum.ewm.main.dto.CategoryDto;
 import ru.practicum.ewm.main.dto.CategoryDtoRequest;
 import ru.practicum.ewm.main.model.Category;
 
-import java.util.Optional;
-
 public class CategoryDtoMapper {
+    private CategoryDtoMapper() {
+    }
+
     public static Category toCategory(@NonNull CategoryDtoRequest categoryDtoRequest) {
         Category category = new Category();
 
-        Optional.ofNullable(categoryDtoRequest.getName()).ifPresent(category::setName);
+        category.setName(categoryDtoRequest.getName());
         return category;
     }
 

@@ -25,6 +25,7 @@ import ru.practicum.ewm.main.service.EventPublicService;
 import ru.practicum.ewm.main.service.EventStatisticService;
 import ru.practicum.ewm.stats.common.dto.request.HitRequestDto;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -293,15 +294,15 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
 
     private Event getEvent(Long eventId) {
         return eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(String.format("Event with id=%d was not found", eventId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%d was not found", eventId)));
     }
 
     private Event getEvent(EventNewDto eventDto, Long userId) {
         Long categoryId = eventDto.getCategory();
         User initiator = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("user with id = %d not found", userId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("user with id = %d not found", userId)));
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(String.format("category with id=%d was not found", categoryId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("category with id=%d was not found", categoryId)));
         return EventDtoMapper.toEvent(eventDto, initiator, category);
     }
 
@@ -389,19 +390,19 @@ public class EventServiceImpl implements EventPrivateService, EventAdminService,
 
     private void checkCategoryExists(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
-            throw new CategoryNotFoundException(String.format("category with id=%d was not found", categoryId));
+            throw new EntityNotFoundException(String.format("category with id=%d was not found", categoryId));
         }
     }
 
     private void checkUserExists(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException(String.format("user with id = %d not found", userId));
+            throw new EntityNotFoundException(String.format("user with id = %d not found", userId));
         }
     }
 
     private void checkEventExists(Long eventId) {
         if (!eventRepository.existsById(eventId)) {
-            throw new EventNotFoundException(String.format("event with id = %d not found", eventId));
+            throw new EntityNotFoundException(String.format("event with id = %d not found", eventId));
         }
     }
 

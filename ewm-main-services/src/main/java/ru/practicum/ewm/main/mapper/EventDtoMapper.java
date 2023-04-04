@@ -10,21 +10,23 @@ import ru.practicum.ewm.main.model.Event;
 import ru.practicum.ewm.main.model.User;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class EventDtoMapper {
+    private EventDtoMapper() {
+    }
+
     public static Event toEvent(@NonNull EventNewDto eventNewDto, @NonNull User initiator, @NonNull Category category) {
         Event event = new Event();
 
-        Optional.ofNullable(eventNewDto.getTitle()).ifPresent(event::setTitle);
-        Optional.ofNullable(eventNewDto.getDescription()).ifPresent(event::setDescription);
-        Optional.ofNullable(eventNewDto.getAnnotation()).ifPresent(event::setAnnotation);
-        Optional.ofNullable(eventNewDto.getEventDate()).ifPresent(event::setEventDate);
-        Optional.ofNullable(eventNewDto.getPaid()).ifPresent(event::setPaid);
-        Optional.ofNullable(eventNewDto.getRequestModeration()).ifPresent(event::setRequestModeration);
-        Optional.ofNullable(eventNewDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
-        Optional.ofNullable(eventNewDto.getLocation().getLat()).ifPresent(event::setLat);
-        Optional.ofNullable(eventNewDto.getLocation().getLon()).ifPresent(event::setLon);
+        event.setTitle(eventNewDto.getTitle());
+        event.setDescription(eventNewDto.getDescription());
+        event.setAnnotation(eventNewDto.getAnnotation());
+        event.setEventDate(eventNewDto.getEventDate());
+        event.setPaid(eventNewDto.getPaid());
+        event.setRequestModeration(eventNewDto.getRequestModeration());
+        event.setParticipantLimit(eventNewDto.getParticipantLimit());
+        event.setLat(eventNewDto.getLocation().getLat());
+        event.setLon(eventNewDto.getLocation().getLon());
         event.setCategory(category);
         event.setInitiator(initiator);
         return event;
@@ -33,22 +35,9 @@ public class EventDtoMapper {
     public static EventFullDto toEventFullDto(@NonNull Event event, Long views, Long confirmedRequests) {
         EventFullDto eventFullDto = new EventFullDto();
 
-        Optional.ofNullable(event.getId()).ifPresent(eventFullDto::setId);
-        Optional.ofNullable(event.getTitle()).ifPresent(eventFullDto::setTitle);
-        Optional.ofNullable(event.getParticipantLimit()).ifPresent(eventFullDto::setParticipantLimit);
-        Optional.ofNullable(event.getAnnotation()).ifPresent(eventFullDto::setAnnotation);
-        Optional.ofNullable(event.getDescription()).ifPresent(eventFullDto::setDescription);
-        Optional.ofNullable(event.getPaid()).ifPresent(eventFullDto::setPaid);
-        Optional.ofNullable(event.getRequestModeration()).ifPresent(eventFullDto::setRequestModeration);
-        Optional.ofNullable(event.getEventState()).ifPresent(eventFullDto::setState);
-        Optional.ofNullable(event.getEventDate()).ifPresent(eventFullDto::setEventDate);
-        Optional.ofNullable(event.getCreatedOn()).ifPresentOrElse(eventFullDto::setCreatedOn, LocalDateTime::now);
-        Optional.ofNullable(event.getPublishedOn()).ifPresent(eventFullDto::setPublishedOn);
-        Optional.ofNullable(views).ifPresent(eventFullDto::setViews);
-        Optional.ofNullable(confirmedRequests).ifPresent(eventFullDto::setConfirmedRequests);
-        eventFullDto.setLocation(Location.of(event));
-        eventFullDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
-        eventFullDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
+        fillEventFullDtoWithoutViewsAndRequests(event, eventFullDto);
+        eventFullDto.setViews(views);
+        eventFullDto.setConfirmedRequests(confirmedRequests);
 
         return eventFullDto;
     }
@@ -56,49 +45,59 @@ public class EventDtoMapper {
     public static EventFullDto toEventFullDto(@NonNull Event event) {
         EventFullDto eventFullDto = new EventFullDto();
 
-        Optional.ofNullable(event.getId()).ifPresent(eventFullDto::setId);
-        Optional.ofNullable(event.getTitle()).ifPresent(eventFullDto::setTitle);
-        Optional.ofNullable(event.getParticipantLimit()).ifPresent(eventFullDto::setParticipantLimit);
-        Optional.ofNullable(event.getAnnotation()).ifPresent(eventFullDto::setAnnotation);
-        Optional.ofNullable(event.getDescription()).ifPresent(eventFullDto::setDescription);
-        Optional.ofNullable(event.getPaid()).ifPresent(eventFullDto::setPaid);
-        Optional.ofNullable(event.getRequestModeration()).ifPresent(eventFullDto::setRequestModeration);
-        Optional.ofNullable(event.getEventState()).ifPresent(eventFullDto::setState);
-        Optional.ofNullable(event.getEventDate()).ifPresent(eventFullDto::setEventDate);
-        Optional.ofNullable(event.getCreatedOn()).ifPresentOrElse(eventFullDto::setCreatedOn, LocalDateTime::now);
-        Optional.ofNullable(event.getPublishedOn()).ifPresent(eventFullDto::setPublishedOn);
-        eventFullDto.setLocation(Location.of(event));
-        eventFullDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
-        eventFullDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
-
+        fillEventFullDtoWithoutViewsAndRequests(event, eventFullDto);
         return eventFullDto;
     }
 
     public static EventShortDto toEventShortDto(@NonNull Event event) {
         EventShortDto eventShortDto = new EventShortDto();
 
-        Optional.ofNullable(event.getId()).ifPresent(eventShortDto::setId);
-        Optional.ofNullable(event.getAnnotation()).ifPresent(eventShortDto::setAnnotation);
-        Optional.ofNullable(event.getEventDate()).ifPresent(eventShortDto::setEventDate);
-        Optional.ofNullable(event.getPaid()).ifPresent(eventShortDto::setPaid);
-        Optional.ofNullable(event.getTitle()).ifPresent(eventShortDto::setTitle);
-        eventShortDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
-        eventShortDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
+        fillEventShortDtoWithoutViewsAndRequests(event, eventShortDto);
         return eventShortDto;
     }
 
     public static EventShortDto toEventShortDto(@NonNull Event event, @NonNull Long views, @NonNull Long confirmedRequests) {
         EventShortDto eventShortDto = new EventShortDto();
 
-        Optional.ofNullable(event.getId()).ifPresent(eventShortDto::setId);
-        Optional.ofNullable(event.getAnnotation()).ifPresent(eventShortDto::setAnnotation);
-        Optional.ofNullable(event.getEventDate()).ifPresent(eventShortDto::setEventDate);
-        Optional.ofNullable(event.getPaid()).ifPresent(eventShortDto::setPaid);
-        Optional.ofNullable(event.getTitle()).ifPresent(eventShortDto::setTitle);
+        fillEventShortDtoWithoutViewsAndRequests(event, eventShortDto);
         eventShortDto.setViews(views);
         eventShortDto.setConfirmedRequests(confirmedRequests);
+        return eventShortDto;
+    }
+
+    private static void fillEventShortDtoWithoutViewsAndRequests(Event event, EventShortDto eventShortDto) {
+        eventShortDto.setId(event.getId());
+        eventShortDto.setAnnotation(event.getAnnotation());
+        eventShortDto.setEventDate(event.getEventDate());
+        eventShortDto.setPaid(event.getPaid());
+        eventShortDto.setTitle(event.getTitle());
         eventShortDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
         eventShortDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
-        return eventShortDto;
+    }
+
+    private static void fillEventFullDtoWithoutViewsAndRequests(Event event, EventFullDto eventFullDto) {
+        eventFullDto.setId(event.getId());
+        eventFullDto.setTitle(event.getTitle());
+        eventFullDto.setParticipantLimit(event.getParticipantLimit());
+        eventFullDto.setAnnotation(event.getAnnotation());
+        eventFullDto.setDescription(event.getDescription());
+        eventFullDto.setPaid(event.getPaid());
+        eventFullDto.setRequestModeration(event.getRequestModeration());
+        eventFullDto.setState(event.getEventState());
+        eventFullDto.setEventDate(event.getEventDate());
+        eventFullDto.setPublishedOn(event.getPublishedOn());
+        eventFullDto.setLocation(Location.of(event));
+        eventFullDto.setInitiator(UserDtoMapper.toUserShortDto(event.getInitiator()));
+        eventFullDto.setCategory(CategoryDtoMapper.toCategoryDto(event.getCategory()));
+        fillCreatedOn(event, eventFullDto);
+    }
+
+    private static void fillCreatedOn(Event event, EventFullDto eventFullDto) {
+        LocalDateTime createdOn = event.getCreatedOn();
+        if (createdOn == null) {
+            LocalDateTime.now();
+        } else {
+            eventFullDto.setCreatedOn(createdOn);
+        }
     }
 }

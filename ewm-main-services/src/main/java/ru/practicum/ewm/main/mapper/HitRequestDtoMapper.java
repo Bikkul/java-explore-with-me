@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 public class HitRequestDtoMapper {
+    private HitRequestDtoMapper() {
+    }
 
     public static HitRequestDto toHitRequestDto(@NonNull HttpServletRequest request, String appName) {
         HitRequestDto hitDto = new HitRequestDto();

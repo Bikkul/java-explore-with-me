@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.ewm.main.common.ApiError;
 import ru.practicum.ewm.main.exception.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.ServletException;
 
 @RestControllerAdvice
+@Slf4j
 public class ErrorHandler {
     @ExceptionHandler({
             ServletException.class,
@@ -21,6 +24,7 @@ public class ErrorHandler {
             NumberFormatException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError badRequestExceptionHandle(final Exception e) {
+        log.error("400 bad request exception reason:{}", e.getMessage(), e);
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.BAD_REQUEST)
@@ -31,14 +35,10 @@ public class ErrorHandler {
         return apiError;
     }
 
-    @ExceptionHandler({UserNotFoundException.class,
-            EventNotFoundException.class,
-            CategoryNotFoundException.class,
-            CompilationNotFoundException.class,
-            ParticipationRequestsNotFoundException.class
-    })
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError notFoundExceptionHandle(final RuntimeException e) {
+    public ApiError notFoundExceptionHandle(final EntityNotFoundException e) {
+        log.error("404 not found exception reason:{}", e.getMessage(), e);
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.NOT_FOUND)
@@ -52,6 +52,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleThrowable(final Throwable e) {
+        log.error("500 undefined error reason:{}", e.getMessage(), e);
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -66,6 +67,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError dateIntegrityExceptionHandle(final DataIntegrityViolationException e) {
+        log.error("409 data violation constraint exception reason:{}", e.getMessage(), e);
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.CONFLICT)
@@ -90,6 +92,7 @@ public class ErrorHandler {
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError conflictExceptionHandle(final Exception e) {
+        log.error("409 conflict exception reason:{}", e.getMessage(), e);
         ApiError apiError = ApiError
                 .builder()
                 .status(HttpStatus.CONFLICT)

@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.main.dto.ParticipationDto;
-import ru.practicum.ewm.main.exception.*;
+import ru.practicum.ewm.main.exception.NotValidEventToParticipationRequestException;
+import ru.practicum.ewm.main.exception.NotValidUserToParticipationRequestException;
+import ru.practicum.ewm.main.exception.ParticipationRequestsAlreadyExistsException;
+import ru.practicum.ewm.main.exception.ParticipationRequestsOutOfBoundsException;
 import ru.practicum.ewm.main.mapper.ParticipationDtoMapper;
 import ru.practicum.ewm.main.model.Event;
 import ru.practicum.ewm.main.model.Participation;
@@ -16,6 +19,7 @@ import ru.practicum.ewm.main.repository.ParticipationRepository;
 import ru.practicum.ewm.main.repository.UserRepository;
 import ru.practicum.ewm.main.service.ParticipationPrivateService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,23 +63,23 @@ public class ParticipationPrivateServiceImpl implements ParticipationPrivateServ
 
     private Participation getParticipationById(Long requestId) {
         return participationRepository.findById(requestId)
-                .orElseThrow(() -> new ParticipationRequestsNotFoundException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Participation with id=%d not found", requestId)));
     }
 
     private Event getEvent(Long eventId) {
         return eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(String.format("Event with id=%d was not found", eventId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%d was not found", eventId)));
     }
 
     private User getRequester(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("user with id = %d not found", userId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("user with id = %d not found", userId)));
     }
 
     private void checkUserExists(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException(String.format("user with id = %d not found", userId));
+            throw new EntityNotFoundException(String.format("user with id = %d not found", userId));
         }
     }
 

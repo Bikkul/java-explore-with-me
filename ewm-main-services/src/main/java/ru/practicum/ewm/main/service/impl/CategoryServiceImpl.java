@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.main.common.MyPageRequest;
 import ru.practicum.ewm.main.dto.CategoryDto;
 import ru.practicum.ewm.main.dto.CategoryDtoRequest;
-import ru.practicum.ewm.main.exception.CategoryNotFoundException;
 import ru.practicum.ewm.main.mapper.CategoryDtoMapper;
 import ru.practicum.ewm.main.model.Category;
 import ru.practicum.ewm.main.repository.CategoryRepository;
 import ru.practicum.ewm.main.service.CategoryAdminService;
 import ru.practicum.ewm.main.service.CategoryPublicService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryAdminService, CategoryPublic
 
     private void checkCategoryExists(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotFoundException(String.format("category with id=%d was not found", id));
+            throw new EntityNotFoundException(String.format("category with id=%d was not found", id));
         }
     }
 

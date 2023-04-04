@@ -6,9 +6,10 @@ import ru.practicum.ewm.main.dto.UserRequestDto;
 import ru.practicum.ewm.main.dto.UserShortDto;
 import ru.practicum.ewm.main.model.User;
 
-import java.util.Optional;
-
 public class UserDtoMapper {
+    private UserDtoMapper() {
+    }
+
     public static UserDto toUserDto(@NonNull User user) {
         UserDto userDto = new UserDto();
 
@@ -21,8 +22,8 @@ public class UserDtoMapper {
     public static User toUser(@NonNull UserRequestDto userDto) {
         User user = new User();
 
-        Optional.ofNullable(userDto.getEmail()).ifPresent(user::setEmail);
-        Optional.ofNullable(userDto.getName()).ifPresent(user::setName);
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
         return user;
     }
 

@@ -8,15 +8,17 @@ import ru.practicum.ewm.main.model.Compilation;
 import ru.practicum.ewm.main.model.Event;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class CompilationDtoMapper {
+    private CompilationDtoMapper() {
+    }
+
     public static Compilation toCompilation(@NonNull CompilationRequestDto compilationDto, @NonNull Set<Event> events) {
         Compilation compilation = new Compilation();
 
-        Optional.ofNullable(compilationDto.getTitle()).ifPresent(compilation::setTitle);
-        Optional.ofNullable(compilationDto.getPinned()).ifPresent(compilation::setPinned);
+        compilation.setTitle(compilationDto.getTitle());
+        compilation.setPinned(compilationDto.getPinned());
         compilation.setEvents(events);
         return compilation;
     }

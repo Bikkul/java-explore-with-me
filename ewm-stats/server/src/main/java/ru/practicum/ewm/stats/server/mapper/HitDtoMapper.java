@@ -8,6 +8,8 @@ import ru.practicum.ewm.stats.server.model.Hit;
 import java.util.Optional;
 
 public class HitDtoMapper {
+    private HitDtoMapper() {
+    }
 
     public static Hit fromDto(@NonNull HitRequestDto hitRequestDto) {
         Hit hit = new Hit();
