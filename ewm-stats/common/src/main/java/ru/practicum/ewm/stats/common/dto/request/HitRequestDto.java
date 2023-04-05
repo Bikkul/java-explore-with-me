@@ -3,7 +3,6 @@ package ru.practicum.ewm.stats.common.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class HitRequestDto {
     @NotEmpty
@@ -29,4 +27,14 @@ public class HitRequestDto {
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+
+    public HitRequestDto(String app, String uri, String ip, LocalDateTime timestamp) {
+        this.app = app;
+        this.uri = uri;
+        this.ip = ip;
+        this.timestamp = timestamp;
+    }
+
+    public HitRequestDto() {
+    }
 }

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats.server.utils;
+package ru.practicum.ewm.stats.server.mapper;
 
 import org.springframework.lang.NonNull;
 import ru.practicum.ewm.stats.common.dto.request.HitRequestDto;
@@ -8,6 +8,8 @@ import ru.practicum.ewm.stats.server.model.Hit;
 import java.util.Optional;
 
 public class HitDtoMapper {
+    private HitDtoMapper() {
+    }
 
     public static Hit fromDto(@NonNull HitRequestDto hitRequestDto) {
         Hit hit = new Hit();
