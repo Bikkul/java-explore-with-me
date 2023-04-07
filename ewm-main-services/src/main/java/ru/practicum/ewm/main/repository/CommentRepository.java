@@ -8,30 +8,33 @@ import ru.practicum.ewm.main.model.Comment;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByCommentatorUserId(Long userId, Pageable pageable);
 
-    Comment findByIdAndCommentatorUserId(Long commentId, Long userId);
+    Optional<Comment> findByIdAndCommentatorUserId(Long commentId, Long userId);
 
-    Comment findByIdAndEventId(Long commentId, Long eventId);
+    Optional<Comment>  findByIdAndEventId(Long commentId, Long eventId);
 
     List<Comment> findAllByEventId(Long eventId, Pageable pageable);
 
     @Query("SELECT comments " +
             "FROM Comment AS comments " +
-            "WHERE (comments.createdOn BETWEEN :start AND :END) " +
-            "AND ((:users IS NULL) " +
-            "       OR (comments.commentator.userId IN (:users))) " +
-            "AND ((:events IS NULL) " +
-            "       OR (comments.event.id IN (:events))) " +
+            "JOIN FETCH comments.event " +
+            "JOIN FETCH comments.commentator " +
+            "WHERE ((:eventIds IS NULL) " +
+            "       OR (comments.event.id IN (:eventIds))) " +
+            "AND ((:userIds IS NULL) " +
+            "       OR (comments.commentator IN (:userIds))) " +
+            "AND (comments.createdOn BETWEEN :start AND :end) " +
             "AND ((:text IS NULL) " +
-            "       OR LOWER(comments.text) LIKE LOWER(CONCAT('%',:text,'%')))")
+            "       OR LOWER(comments.text) LIKE LOWER(CONCAT('%',:commentText,'%')))")
     List<Comment> searchCommentsByParam(@Param("start") LocalDateTime rangeStart,
-                               @Param("end") LocalDateTime rangeEnd,
-                               @Param("users") Set<Long> userIds,
-                               @Param("events") Set<Long> eventIds,
-                               @Param("text") String text, Pageable pageable);
+                                        @Param("end") LocalDateTime rangeEnd,
+                                        @Param("userIds") Set<Long> userIds,
+                                        @Param("eventIds") Set<Long> eventIds,
+                                        @Param("commentText") String text, Pageable pageable);
 }

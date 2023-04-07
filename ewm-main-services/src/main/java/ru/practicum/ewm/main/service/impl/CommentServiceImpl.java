@@ -55,14 +55,15 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
     }
 
     @Override
+    @Transactional
     public void deleteCommentByAdmin(Long eventId, Long commentId) {
         checkEventExists(eventId);
-        checkCommentExists(commentId);
         checkCommentExists(commentId);
         commentRepository.deleteById(commentId);
     }
 
     @Override
+    @Transactional
     public CommentDto addNewCommentToEvent(CommentRequestDto commentRequestDto, Long userId) {
         Long eventId = commentRequestDto.getEventId();
         Event event = getEvent(eventId);
@@ -74,21 +75,23 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
     }
 
     @Override
+    @Transactional
     public CommentDto updateEventComment(CommentRequestDto commentRequestDto, Long userId, Long commentId) {
         checkEventExists(commentRequestDto.getEventId());
-        Long commentatorId = getUser(userId).getUserId();
-        checkValidUserComment(userId, commentatorId);
         Comment comment = getComment(commentId);
+        Long commentatorId = getComment(commentId).getCommentator().getUserId();
+        checkValidUserComment(userId, commentatorId);
         Comment commentToUpdate = getCommentToUpdate(comment, commentRequestDto);
         Comment updatedComment = commentRepository.saveAndFlush(commentToUpdate);
         return CommentDtoMapper.toCommentDto(updatedComment);
     }
 
     @Override
+    @Transactional
     public void deleteEventComment(Long eventId, Long userId, Long commentId) {
         checkEventExists(eventId);
         checkUserExists(userId);
-        Long commentatorId = getComment(commentId).getId();
+        Long commentatorId = getComment(commentId).getCommentator().getUserId();
         checkValidUserComment(userId, commentatorId);
         commentRepository.deleteById(commentId);
     }
@@ -96,48 +99,41 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
     @Override
     public List<CommentDto> getUserComments(Integer from, Integer size, Long userId, CommentSort commentSort) {
         checkUserExists(userId);
-        if (commentSort == CommentSort.SORT_BY_TIME_DESC) {
-            return commentRepository.findAllByCommentatorUserId(userId, MyPageRequest.of(from, size))
-                    .stream()
-                    .map(CommentDtoMapper::toCommentDto)
-                    .sorted(Comparator.comparing(CommentDto::getCreatedOn).reversed())
-                    .collect(Collectors.toList());
+
+        if (commentSort != null) {
+            return getSortedUserComments(from, size, userId, commentSort);
         }
         return commentRepository.findAllByCommentatorUserId(userId, MyPageRequest.of(from, size))
                 .stream()
                 .map(CommentDtoMapper::toCommentDto)
-                .sorted(Comparator.comparing(CommentDto::getCreatedOn))
                 .collect(Collectors.toList());
     }
 
     @Override
     public CommentDto getUserCommentById(Long userId, Long commentId) {
         checkUserExists(userId);
-        Comment userComment = commentRepository.findByIdAndCommentatorUserId(commentId, userId);
+        Comment userComment = commentRepository.findByIdAndCommentatorUserId(commentId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("comment with id=%d not found", commentId)));
         return CommentDtoMapper.toCommentDto(userComment);
     }
 
     @Override
     public List<CommentDto> getEventComments(Integer from, Integer size, Long eventId, CommentSort sort) {
         checkEventExists(eventId);
-        if (sort == CommentSort.SORT_BY_TIME_DESC) {
-            return commentRepository.findAllByEventId(eventId, MyPageRequest.of(from, size))
-                    .stream()
-                    .map(CommentDtoMapper::toCommentDto)
-                    .sorted(Comparator.comparing(CommentDto::getCreatedOn).reversed())
-                    .collect(Collectors.toList());
+        if (sort != null) {
+            return getSortedEventComments(from, size, eventId, sort);
         }
         return commentRepository.findAllByEventId(eventId, MyPageRequest.of(from, size))
                 .stream()
                 .map(CommentDtoMapper::toCommentDto)
-                .sorted(Comparator.comparing(CommentDto::getCreatedOn))
                 .collect(Collectors.toList());
     }
 
     @Override
     public CommentDto getEventCommentById(Long eventId, Long commentId) {
         checkEventExists(eventId);
-        Comment comment = commentRepository.findByIdAndEventId(commentId, eventId);
+        Comment comment = commentRepository.findByIdAndEventId(commentId, eventId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("comment with id=%d not found", commentId)));
         return CommentDtoMapper.toCommentDto(comment);
     }
 
@@ -159,8 +155,10 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
     }
 
     private void checkValidUserComment(Long userId, Long commentatorId) {
-        if (commentatorId.equals(userId)) {
-            throw new AccessPermissionDeniedException("user with id=%d have not access to change comment with id=%d");
+        if (!commentatorId.equals(userId)) {
+            throw new AccessPermissionDeniedException(String
+                    .format("user with id=%d have not access to change comment, " +
+                            "comment owner id=%d", userId, commentatorId));
         }
     }
 
@@ -238,5 +236,45 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
             rangeStart = LocalDateTime.MIN;
         }
         return rangeStart;
+    }
+
+    private List<CommentDto> getSortedUserComments(Integer from, Integer size, Long userId, CommentSort commentSort) {
+        switch (commentSort) {
+            case SORT_BY_TIME_ASC:
+                return commentRepository.findAllByCommentatorUserId(userId, MyPageRequest.of(from, size))
+                        .stream()
+                        .map(CommentDtoMapper::toCommentDto)
+                        .collect(Collectors.toList());
+            case SORT_BY_TIME_DESC:
+                return commentRepository.findAllByCommentatorUserId(userId, MyPageRequest.of(from, size))
+                        .stream()
+                        .map(CommentDtoMapper::toCommentDto)
+                        .sorted(Comparator.comparing(CommentDto::getCreatedOn).reversed())
+                        .collect(Collectors.toList());
+            default:
+                throw new IllegalEventSortParameterException(String
+                        .format("sort parameter expect SORT_BY_TIME_ASC, SORT_BY_TIME_DESC " +
+                                "actual: %s", commentSort));
+        }
+    }
+
+    private List<CommentDto> getSortedEventComments(Integer from, Integer size, Long eventId, CommentSort sort) {
+        switch (sort) {
+            case SORT_BY_TIME_ASC:
+                return commentRepository.findAllByEventId(eventId, MyPageRequest.of(from, size))
+                        .stream()
+                        .map(CommentDtoMapper::toCommentDto)
+                        .collect(Collectors.toList());
+            case SORT_BY_TIME_DESC:
+                return commentRepository.findAllByEventId(eventId, MyPageRequest.of(from, size))
+                        .stream()
+                        .map(CommentDtoMapper::toCommentDto)
+                        .sorted(Comparator.comparing(CommentDto::getCreatedOn).reversed())
+                        .collect(Collectors.toList());
+            default:
+                throw new IllegalEventSortParameterException(String
+                        .format("sort parameter expect SORT_BY_TIME_ASC, SORT_BY_TIME_DESC " +
+                                "actual: %s", sort));
+        }
     }
 }

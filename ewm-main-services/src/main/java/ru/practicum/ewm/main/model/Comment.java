@@ -26,7 +26,7 @@ public class Comment {
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_user_id")
+    @JoinColumn(name = "comment_commentator_id")
     private User commentator;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

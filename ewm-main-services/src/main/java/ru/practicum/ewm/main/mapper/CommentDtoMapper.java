@@ -27,6 +27,7 @@ public class CommentDtoMapper {
         commentDto.setText(comment.getText());
         commentDto.setEvent(comment.getEvent().getId());
         commentDto.setCommentator(comment.getCommentator().getUserId());
+        commentDto.setCreatedOn(comment.getCreatedOn());
         return commentDto;
     }
 }
