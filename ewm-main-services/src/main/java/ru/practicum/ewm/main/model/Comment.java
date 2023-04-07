@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Setter
@@ -26,11 +27,14 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_user_id")
-    private User user;
+    private User commentator;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_event_id")
     private Event event;
+
+    @Column(name = "comment_created_on")
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     @Override
     public boolean equals(Object o) {
