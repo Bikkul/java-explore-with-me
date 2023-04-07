@@ -78,6 +78,7 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
     @Transactional
     public CommentDto updateEventComment(CommentRequestDto commentRequestDto, Long userId, Long commentId) {
         checkEventExists(commentRequestDto.getEventId());
+        checkUserExists(userId);
         Comment comment = getComment(commentId);
         Long commentatorId = getComment(commentId).getCommentator().getUserId();
         checkValidUserComment(userId, commentatorId);
