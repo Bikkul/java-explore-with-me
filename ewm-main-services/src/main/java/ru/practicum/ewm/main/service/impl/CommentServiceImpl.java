@@ -194,7 +194,7 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
 
     private static LocalDateTime getValidRangeEndDateTime(LocalDateTime rangeEnd) {
         if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.MAX;
+            rangeEnd = LocalDateTime.now();
         }
         return rangeEnd;
     }
@@ -234,7 +234,7 @@ public class CommentServiceImpl implements CommentPublicService, CommentPrivateS
 
     private static LocalDateTime getValidRangeStartDateTime(LocalDateTime rangeStart) {
         if (rangeStart == null) {
-            rangeStart = LocalDateTime.MIN;
+            rangeStart = LocalDateTime.now().minusYears(1L);
         }
         return rangeStart;
     }

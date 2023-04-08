@@ -28,9 +28,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "WHERE ((:eventIds IS NULL) " +
             "       OR (comments.event.id IN (:eventIds))) " +
             "AND ((:userIds IS NULL) " +
-            "       OR (comments.commentator IN (:userIds))) " +
+            "       OR (comments.commentator.userId IN (:userIds))) " +
             "AND (comments.createdOn BETWEEN :start AND :end) " +
-            "AND ((:text IS NULL) " +
+            "AND ((:commentText IS NULL) " +
             "       OR LOWER(comments.text) LIKE LOWER(CONCAT('%',:commentText,'%')))")
     List<Comment> searchCommentsByParam(@Param("start") LocalDateTime rangeStart,
                                         @Param("end") LocalDateTime rangeEnd,
