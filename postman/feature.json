@@ -95,6 +95,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments",
 							"host": [
@@ -180,6 +189,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments",
 							"host": [
@@ -267,6 +285,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments",
 							"host": [
@@ -355,6 +382,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments",
 							"host": [
@@ -462,6 +498,10 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}"
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -555,6 +595,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -648,6 +697,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -741,6 +799,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -834,6 +901,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -4178,6 +4254,11 @@
 		},
 		{
 			"key": "response",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "request_body",
 			"value": "",
 			"type": "string"
 		}
