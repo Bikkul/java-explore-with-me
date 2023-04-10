@@ -88,7 +88,8 @@ public class ErrorHandler {
             ParticipationRequestsStatusException.class,
             ParticipationRequestsOutOfBoundsException.class,
             NotValidUserToParticipationRequestException.class,
-            NotValidEventToParticipationRequestException.class
+            NotValidEventToParticipationRequestException.class,
+            AccessPermissionDeniedException.class
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError conflictExceptionHandle(final Exception e) {
