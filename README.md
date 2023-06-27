@@ -12,7 +12,7 @@
 - [Технологический стек](#технологический-стек)
 
 ## Архитектура проекта
-![project architecture](./.readme/project_architecture.png)
+![project architecture](./project_architecture.png)
 
 ## Инструкция по установке
 
